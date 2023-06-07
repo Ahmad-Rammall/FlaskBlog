@@ -1,0 +1,77 @@
+cmd:
+set FLASK_APP = fileName
+falsk run --> to run the server
+OR
+set FLASK_DEBUG=1 --> we dont have to restart the server when updating infos
+OR
+if __name__ == '__main__': 
+    app.run(debug=True)
+in the terminal : python name
+
+
+to install wt forms:
+install flask-wtf
+
+to install sqlAlchemy
+pip install sqlalchemy
+
+when working with database :
+cmd:
+	python
+	>>> from flaskBlog import db , app
+	>>> app.app_context().push()
+	>>> db.create_all()
+	>>> create user 
+	>>> db.session.add(user) // to add user the db
+	>>> db.session.commit() // send infos to database
+	>>> User.query.all() // show all users
+	>>> User.query.filter_by(username='Ahmad12').first() // show user with this username
+	>>> user1=User.query.filter_by(username='Ahmad12').first()
+	>>> db.drop_all() // clear data
+
+add to the .py file:
+	with app.app_context():
+    	   db.create_all()
+
+
+to install Bcrypt:
+pip install flask-bcrypt
+
+	python
+	>>> from flask_bcrypt import Bcrypt
+	>>> bcrypt = Bcrypt()
+	>>> bcrypt.generate_password_hash('...')
+	>>> bcrypt.generate_password_hash('...').decode('UTF-8')
+	>>> bcrypt.check_password_hash(hashed_p , 'password') // true or false
+
+
+
+******************************************
+user = User.query.filter_by(email = form.email.data).first()
+==> if email == form.email.data , get the first user with this email and
+put it inside 'user' variable
+
+
+bcrypt.check_password_hash(pass1 , pass2)
+==> compare the hash of the two passwords to test if 
+these passwords are the same 
+******************************************
+
+to install login :
+pip install flask-login
+
+to install Pillow
+pip install Pillow
+
+to reset password By Email:
+	python
+		>>> from itsdangerous import URLSafeTimedSerializer as Serializer
+		>>> s = Serializer('secret' , 30) --> secret key , time second
+		>>> token = s.dumps({ 'user_id' : 1 }).decode('UTF-8')
+
+to add secret fields into bash:
+code ~/.bash_profile
+	export x='...'
+	export y='...'
++
+set environment variables

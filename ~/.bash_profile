@@ -1,0 +1,2 @@
+export SQLALCHEMY_DATABASE_URI='331ec1b76a49069ece0f76033a474226'
+export SECRET_KEY='sqlite:///site.db'
