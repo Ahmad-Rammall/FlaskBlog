@@ -1,8 +1,7 @@
-from flask import current_app 
+from flask import current_app
 from PIL import Image
 from flask_mail import Message
-import secrets
-import os
+import secrets,os
 
 
 def savePicture(form_picture):

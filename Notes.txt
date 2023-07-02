@@ -75,3 +75,16 @@ code ~/.bash_profile
 	export y='...'
 +
 set environment variables
+
+
+--------------------------------------
+add relation:
+i1.owner = User.query.filter_by(id=1).first().id
+>>> db.session.add(i1)
+>>> db.session.commit()
+
+>>> i1.owner
+1
+>>> i1.owned_user
+1 , ahmad , ahmad_rammal2016@outlook.com , 123 , defaultUser.png
+>>>
