@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flaskBlog.Users.utils import savePicture, sendResetEmail
-from flaskBlog.models import User
+from flaskBlog.models import Post, User
 from flask import render_template , flash , redirect, request , url_for
 from flaskBlog.Users.forms import RegistractionForm , LoginForm , UpdateForm , RequestResetForm , ResetPasswordForm
 from flaskBlog import bcrypt , db   
@@ -30,24 +30,27 @@ def login():
     if form.validate_on_submit() :
         user = User.query.filter_by(email = form.email.data).first()
         if user and bcrypt.check_password_hash(user.password , form.password.data):
-            login_user(user , remember=form.remember.data)
+            login_user(user)
             #next_page = request.args.get('next')
             flash(f'Logged In for {form.email.data}!' , 'success') 
             return redirect('/')
         else:
-            flash(f'Log In Is Unsuccessful. Please check email and username!' , 'danger') 
+            flash(f'Log In Is Unsuccessful. Please check email and password!' , 'danger') 
 
     return render_template('login.html' , title='Login' , form=form)
 
 @users.route("/logout")
 def logout():
     logout_user()
+    flash(f'Logedd out  Successfully!' , 'success') 
+
     return redirect('/')
 
 @users.route("/account", methods=['GET' , 'POST'])
 @login_required
 def account():
     form = UpdateForm()
+    own_posts = Post.query.filter_by(user_id = current_user.id)
     if form.validate_on_submit():
         if form.picture.data:
             picture_file = savePicture(form.picture.data)
@@ -63,7 +66,8 @@ def account():
         form.email.data = current_user.email
 
     image_file = url_for('static' , filename = 'images/' + current_user.image_file)
-    return render_template('account.html' , title='Account' , image_file = image_file , form=form)
+    return render_template('account.html' , title='Account' , image_file = image_file , form=form,
+                           own_posts=own_posts)
 
 
 @users.route("/reset_password", methods=['GET' , 'POST'])
@@ -74,12 +78,12 @@ def resetRequest():
     if form.validate_on_submit():
         user = User.query.filter_by(email = form.email.data).first()
         sendResetEmail(user)
-        flash('Email Sent!' , 'info')
+        flash('Email Has Been Sent To Reset The Password!' , 'info')
         return redirect(url_for('users.login'))
     return render_template('resetRequest.html' , title='Reset Password' , 
                             form=form )
 
-@users.route("/reset_password/<token>", methods=[' GET' , 'POST'])
+@users.route("/reset_password/<token>", methods=['GET' , 'POST'])
 def resetToken(token):
     if current_user.is_authenticated:
         return redirect('/')
@@ -92,7 +96,7 @@ def resetToken(token):
         hashed_p = bcrypt.generate_password_hash(form.password.data).decode('UTF-8')
         user.password = hashed_p
         db.session.commit()
-        flash(f'Your Password Has Been Updated' , 'success') #success is a bootstrap class
-        return redirect('/login')
+        flash('Your Password Has Been Updated' , 'success') #success is a bootstrap class
+        return redirect(url_for('users.login'))
     return render_template('resetToken.html' , title='Reset Password' , 
                             form=form )

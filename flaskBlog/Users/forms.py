@@ -40,9 +40,7 @@ class LoginForm(FlaskForm):
                         validators=[DataRequired(), Email()])
     
     password = PasswordField('Password' , validators=[DataRequired()])
-    
-    remember = BooleanField('Remember Me')
-    
+        
     submit = SubmitField('LogIn')
 
 class UpdateForm(FlaskForm):
@@ -71,17 +69,15 @@ class UpdateForm(FlaskForm):
                 
 
 class RequestResetForm(FlaskForm):
-    email = StringField('Email', 
-                    validators=[DataRequired(), Email()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Request Password Reset')
+
     def validate_email(self , email):
         user = User.query.filter_by(email=email.data).first()
         if user is None:
             raise ValidationError('There Is No Account With This Email!')
     
 class ResetPasswordForm(FlaskForm):
-    password = PasswordField('Password' , 
-                             validators=[DataRequired()])
-    comfirm_Pass = PasswordField('ComfirmPassword' , 
-                                 validators=[DataRequired(),EqualTo('password')])
+    password = PasswordField('Password' , validators=[DataRequired()])
+    comfirm_Pass = PasswordField('ComfirmPassword' , validators=[DataRequired(),EqualTo('password')])
     submit = SubmitField('Reset Password')

@@ -1,7 +1,7 @@
 from flaskBlog import db , login_manager 
 from datetime import datetime
 from flask_login import UserMixin
-from itsdangerous import URLSafeSerializer as Serializer
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer 
 from flask import current_app
 
 @login_manager.user_loader #to let the extension knows that this is the function to get a user by id
@@ -12,7 +12,7 @@ class User(db.Model , UserMixin):
     id = db.Column(db.Integer , primary_key=True)
     username = db.Column(db.String(20) , unique=True , nullable=False)
     email = db.Column(db.String(100) , unique=True , nullable=False)
-    image_file = db.Column(db.String(20) , nullable=False , default='default.jpg')
+    image_file = db.Column(db.String(20) , nullable=False , default='default.png')
     password = db.Column(db.String(60) , nullable=False)
     posts = db.relationship('Post' , backref='author' , lazy=True)#lazy=true means that sql will load data in one go
 
@@ -20,14 +20,12 @@ class User(db.Model , UserMixin):
         return f"User('{self.username}' , '{self.email}' , '{self.image_file}')"
 
     def getResetToken(self , expires_sec = 1800):
-        #s = Serializer(app.config['SECRET_KEY'] , expires_sec)
-        #return s.dumps({'user_id':self.id}.decode('utf-8'))
-        s = Serializer(current_app.root_path.config['SECRET_KEY'])
-        return s.dumps(self.id)
+        s = Serializer(current_app.config['SECRET_KEY'] , expires_sec)
+        return s.dumps({'user_id':self.id}).decode('utf-8')
     
     @staticmethod
     def verifyResetToken(token):
-        s = Serializer(current_app.root_path.config['SECRET_KEY'])
+        s = Serializer(current_app.config['SECRET_KEY'])
         try:
             user_id = s.loads(token)['user_id']
         except:

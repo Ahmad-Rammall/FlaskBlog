@@ -2,18 +2,30 @@
 
 {%block content%}
 
-{%for post in posts%}
-    <article class="media content-section">
-        <img class="rounded-circle article-image" src="{{ url_for('static' , filename='images/' + post.author.image_file) }}" alt="">
-        <div class="media-body">
-        <div class="article-metadata">
-            <a class="mr-2" href="#">{{ post.author.username }}</a>
-            <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
-        </div>
-        <h2><a class="article-title" href="{{ url_for('posts.post' , post_id = post.id) }}">{{ post.title }}</a></h2>
-        <p class="article-content">{{ post.content }}</p>
-        </div>
-    </article>
-{%endfor%}
+<div class="container" >
+            {%for post in posts%}
+                <article class="media content-section">
+                    <div class="media-body">
+                    <div class="article-metadata">
+                        <img class="rounded-circle article-image" src="{{ url_for('static' , filename='images/' + post.author.image_file) }}" alt="">
+                        <i class="mr-2" href="#">{{ post.author.username }}</i>
+                        <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                    </div>
+                    <h2><a class="article-title" href="{{ url_for('posts.post' , post_id = post.id) }}">{{ post.title }}</a></h2>
+                    <p class="article-content">
+                        {% if post.content |length >250 %}
+                            {{ post.content[:250] }}
+                        <a href="{{ url_for('posts.post' , post_id = post.id) }}">Read More ...</a>
+                        {%else%}
+                            {{ post.content }}
+                        {% endif %}
+                    </p>
+                    </div>
+                </article>
+            {%endfor%}  
+
+
+
+</div>
 
 {%endblock%}
